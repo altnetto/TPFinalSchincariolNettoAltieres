@@ -1,6 +1,6 @@
 ﻿namespace EmpleadosApp
 {
-    partial class formAdicionar
+    partial class FormAdicionar
     {
         /// <summary>
         /// Required designer variable.

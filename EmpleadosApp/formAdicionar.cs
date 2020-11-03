@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace EmpleadosApp
 {
-    public partial class formAdicionar : Form
+    public partial class FormAdicionar : Form
     {
-        public formAdicionar()
+        public FormAdicionar()
         {
             InitializeComponent();
         }
@@ -29,18 +29,26 @@ namespace EmpleadosApp
 
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
-            Empleado nuevoEmpleado = new Empleado();
+            try
+            {
+                Empleado nuevoEmpleado = new Empleado();
 
-            nuevoEmpleado.NombreCompleto = txtNombre.Text;
-            nuevoEmpleado.DNI = txtDNI.Text;
-            nuevoEmpleado.Edad = int.Parse(txtEdad.Text);
-            nuevoEmpleado.Casado = verificarCasado(rb1);
-            nuevoEmpleado.Salario = decimal.Parse(txtSalario.Text);
+                nuevoEmpleado.NombreCompleto = txtNombre.Text;
+                nuevoEmpleado.DNI = txtDNI.Text;
+                nuevoEmpleado.Edad = int.Parse(txtEdad.Text);
+                nuevoEmpleado.Casado = verificarCasado(rb1);
+                nuevoEmpleado.Salario = decimal.Parse(txtSalario.Text);
 
-            FuncionesSQL adicionar = new FuncionesSQL();
-            adicionar.AdcEmpleado(nuevoEmpleado);
+                FuncionesSQL adicionar = new FuncionesSQL();
 
-            this.Close();
+                adicionar.AdcEmpleado(nuevoEmpleado);
+                this.Close();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message, "Error");
+            }
+
         }
 
         private bool verificarCasado (RadioButton rb)

@@ -19,9 +19,8 @@ namespace EmpleadosApp
 
         private void formBuscar_Load(object sender, EventArgs e)
         {
-  
-            FuncionesSQL buscar = new FuncionesSQL();
-            dgvBuscar.DataSource = buscar.buscarEmpleados(txtBusca.Text);
+
+            Cargar();
 
         }
 
@@ -32,9 +31,7 @@ namespace EmpleadosApp
 
         private void btnBuscar_Click(object sender, EventArgs e)
         {
-            FuncionesSQL buscar = new FuncionesSQL();
-            dgvBuscar.DataSource = buscar.buscarEmpleados(txtBusca.Text);
-
+            Cargar();
         }
 
         private void dgvBuscar_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -45,6 +42,13 @@ namespace EmpleadosApp
         private void txtBusca_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void Cargar()
+        {
+            FuncionesSQL buscar = new FuncionesSQL();
+            dgvBuscar.DataSource = buscar.buscarEmpleados(txtBusca.Text);
+            dgvBuscar.Columns["ID"].Visible = false;
         }
     }
 }

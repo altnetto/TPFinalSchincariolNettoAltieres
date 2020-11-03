@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
 using System.Windows.Forms;
+using System.IO;
 
 namespace EmpleadosApp
 { 
@@ -80,31 +81,6 @@ namespace EmpleadosApp
             conexion.Close();
         }
 
-        //public void ...(string nombre)
-        //{
-        //    SqlConnection conexion = new SqlConnection();
-        //    SqlCommand comando = new SqlCommand();
-
-        //    conexion.ConnectionString = "data source=.\\SQLEXPRESS; initial catalog=EMPLEADOS_DB; integrated security=sspi";
-        //    comando.CommandType = System.Data.CommandType.Text;
-
-        //    string commandText = "select * from dbo.Empleados where NombreCompleto Like '@Nombre%'";
-        //    comando.CommandText = commandText;
-
-        //    comando.Parameters.Add("@Nombre", SqlDbType.VarChar);
-        //    comando.Parameters["@Nombre"].Value = nombre;
-
-        //    comando.Connection = conexion;
-        //    conexion.Open();
-
-
-
-
-        //    comando.ExecuteNonQuery();
-        //    conexion.Close();
-
-        //}
-
         public List<Empleado> buscarEmpleados(string Nombre)
         {
             List<Empleado> lista = new List<Empleado>();
@@ -146,7 +122,7 @@ namespace EmpleadosApp
 
             conexion.ConnectionString = "data source=.\\SQLEXPRESS; initial catalog=EMPLEADOS_DB; integrated security=sspi";
             comando.CommandType = System.Data.CommandType.Text;
-            comando.CommandText = "DELETE * from dbo.Empleados where ID = " + Id.ToString();
+            comando.CommandText = $"DELETE from dbo.Empleados where ID = {Id}";
 
             comando.Connection = conexion;
             conexion.Open();
@@ -169,10 +145,90 @@ namespace EmpleadosApp
             return lista;
         }
 
+        public void modificarEmpleado(DataGridView dgv, Empleado empleado)
+        {
+            SqlConnection conexion = new SqlConnection();
+            SqlCommand comando = new SqlCommand();
+
+            conexion.ConnectionString = "data source=.\\SQLEXPRESS; initial catalog=EMPLEADOS_DB; integrated security=sspi";
+            comando.CommandType = CommandType.Text;
+            string commandText = "UPDATE dbo.Empleados SET NombreCompleto = @Nombre, " +
+                                 "DNI = @DNI, " +
+                                 "Edad = @Edad, " +
+                                 "Casado = @Casado, " +
+                                 "Salario = @Salario " +
+                                 "WHERE ID = @Id";
+
+            comando.CommandText = commandText;
+
+            comando.Parameters.Add("@Nombre", SqlDbType.VarChar);
+            comando.Parameters["@Nombre"].Value = empleado.NombreCompleto;
+
+            comando.Parameters.Add("@DNI", SqlDbType.VarChar);
+            comando.Parameters["@DNI"].Value = empleado.DNI;
+
+
+            comando.Parameters.Add("@Edad", SqlDbType.Int);
+            comando.Parameters["@Edad"].Value = empleado.Edad;
+
+
+            comando.Parameters.Add("@Casado", SqlDbType.Bit);
+            comando.Parameters["@Casado"].Value = empleado.Casado;
+
+
+            comando.Parameters.Add("@Salario", SqlDbType.Decimal);
+            comando.Parameters["@Salario"].Value = empleado.Salario;
+
+            comando.Parameters.Add("@Id", SqlDbType.Int);
+            comando.Parameters["@Id"].Value = empleado.ID;
+
+            comando.Connection = conexion;
+            conexion.Open();
+
+            comando.ExecuteNonQuery();
+            conexion.Close();
+        }
+
+        public Empleado SelectInfo(DataGridView dgv)
+        {
+            Empleado aux = new Empleado();
+            SqlConnection conexion = new SqlConnection();
+            SqlCommand comando = new SqlCommand();
+            SqlDataReader lector;
+
+            var Id = PegarId(dgv);
+
+            conexion.ConnectionString = "data source=.\\SQLEXPRESS; initial catalog=EMPLEADOS_DB; integrated security=sspi";
+            comando.CommandType = System.Data.CommandType.Text;
+            comando.CommandText = $"SELECT * FROM dbo.Empleados where ID = {Id}";
+
+            comando.Connection = conexion;
+            conexion.Open();
+
+            lector = comando.ExecuteReader();
+            while (lector.Read())
+            {
+                aux.ID = lector.GetInt32(0);
+                aux.NombreCompleto = lector.GetString(1);
+                aux.DNI = lector.GetString(2);
+                aux.Edad = lector.GetInt32(3);
+                aux.Casado = lector.GetBoolean(4);
+                aux.Salario = lector.GetDecimal(5);
+            }
+            conexion.Close();
+
+            return aux;
+
+        }
+
         public int PegarId(DataGridView dgv)
         {
             return Convert.ToInt32(dgv.SelectedCells[0].OwningRow.Cells[0].Value);
+        }
 
+        public void OcultarId(DataGridView dgv)
+        {
+            dgv.Columns["ID"].Visible = false;
         }
 
     }

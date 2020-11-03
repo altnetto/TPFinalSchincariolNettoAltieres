@@ -19,35 +19,49 @@ namespace EmpleadosApp
 
         private void FormInicial_Load(object sender, EventArgs e)
         {
-            cargar();
+            Cargar();
         }
 
-        private void cargar()
+        private void Cargar()
         {
             FuncionesSQL conexion = new FuncionesSQL();
             dgvEmpleado.DataSource = conexion.listarEmpleados();
+            dgvEmpleado.Columns["ID"].Visible = false;
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            formAdicionar pantallaAdicional = new formAdicionar();
+            FormAdicionar pantallaAdicional = new FormAdicionar();
             pantallaAdicional.ShowDialog();
 
-            FuncionesSQL conexion = new FuncionesSQL();
-            dgvEmpleado.DataSource = conexion.listarEmpleados();
+            Cargar();
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
         {
-            formBuscar pantallaBuscar = new formBuscar();
-            pantallaBuscar.ShowDialog();
+            new formBuscar().ShowDialog();
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            FuncionesSQL eliminar = new FuncionesSQL();
+            var funcionesSQL = new FuncionesSQL();
+            var id = funcionesSQL.PegarId(dgvEmpleado);
 
-            
+            funcionesSQL.eliminarEmpleado(id);
+            funcionesSQL.listarEmpleados();
+
+            Cargar();
+        }
+
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            new FormModificar().ShowDialog();
+
+            Cargar();
+        }
+
+        private void dgvEmpleado_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
 
         }
     }
